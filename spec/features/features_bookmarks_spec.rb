@@ -7,30 +7,22 @@ feature 'Bookmarks features' do
 
   scenario 'a user can see bookmarks' do
     connection = PG.connect(dbname: 'bookmark_manager_test')
-    Bookmarks.add(url: 'http://www.makersacademy.com')
-    Bookmarks.add(url: 'http://www.destroyallsoftware.com')
-    Bookmarks.add(url: 'http://www.google.com')
+    Bookmarks.create(url: 'http://www.makers.tech', title: 'Makers')
+    Bookmarks.create(url: 'http://www.google.com', title: 'Google')
 
     visit('/bookmarks')
-    expect(page).to have_content('http://www.makersacademy.com')
-    expect(page).to have_content('http://www.destroyallsoftware.com')
-    expect(page).to have_content('http://www.google.com')
+    expect(page).to have_link('Makers', href: 'http://www.makers.tech')
+    expect(page).to have_link('Google', href: 'http://www.google.com')
   end
 
   scenario 'a user can bookmark a page' do
     visit('/add_bookmark')
     fill_in('url', with: 'http://www.franceinter.fr')
+    fill_in('title', with: 'France Inter')
     click_button 'Submit'
-    expect(page).to have_content('http://www.franceinter.fr')
+    expect(page).to have_link('France Inter', href: 'http://www.franceinter.fr')
   end
 
-  scenario 'a user cannot bookmark an invalid URL' do
-    visit('/add_bookmark')
-    fill_in :url, with: "James est fatigué"
-    click_button 'Submit'
-    expect(page).not_to have_content('James est fatigué')
-    expect(page).to have_content('You must submit a valid URL.')
-  end
 
 
 end
